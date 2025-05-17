@@ -1,0 +1,23 @@
+﻿@model IEnumerable<CoffeeApp.Models.Order>
+
+<h2>Hesabım - Siparişlerim</h2>
+
+@foreach (var order in Model)
+{
+    <div>
+        <p><strong>Sipariş Tarihi:</strong> @order.OrderCreated</p>
+        <p><strong>Durum:</strong> @(order.OrderFullfilled.HasValue ? "Tamamlandı" : "Beklemede")</p>
+
+        <h3>Sipariş Detayları:</h3>
+        <ul>
+            @foreach (var detail in order.OrderDetails)
+            {
+                <li>
+                    <strong>Ürün:</strong> @detail.Product.Name -
+                    <strong>Adet:</strong> @detail.Quantity -
+                    <strong>Fiyat:</strong> @detail.Product.Price
+                </li>
+            }
+        </ul>
+    </div>
+}
