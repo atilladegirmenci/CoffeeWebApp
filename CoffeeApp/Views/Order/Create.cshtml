@@ -1,5 +1,7 @@
 ﻿@model CoffeeApp.Models.Order
 @using CoffeeApp.Models
+@using System.Globalization
+
 @{
     var products = ViewBag.Products as List<Product>;
 }
@@ -15,7 +17,7 @@
             <div class="product-card  col-md-4 d-flex flex-column align-items-center text-center">
                 <img src="@product.ImageUrl" class="img-fluid" style="max-height: 200px;" />
                 <h5 class="mt-2">@product.Name</h5>
-                <p>@product.Price ₺</p>
+                <p>@product.Price.ToString("C", new CultureInfo("tr-TR"))</p>
                 <input type="number" min="1" class="form-control mb-2" id="qty-@product.Id" placeholder="Adet" />
                 <button type="button" class="btn btn-outline-primary"
                         onclick="addToCart(@product.Id, '@product.Name', @product.Price)">

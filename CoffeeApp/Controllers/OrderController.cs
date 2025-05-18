@@ -19,16 +19,16 @@ namespace CoffeeApp.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            //var products = _context.Products.ToList(); // Ürünleri alıyoruz
-            //ViewBag.Products = new SelectList(products, "Id", "Name"); // Ürünleri dropdown menüsüne yerleştiriyoruz
+            if(!IsLOggedIn()) return RedirectToAction("Login", "Account");
+
             ViewBag.Products = _context.Products.ToList();
             return View(new Order());
         }
         [HttpPost]
         public IActionResult Create(string CartJson)
         {
-            var customerId = HttpContext.Session.GetInt32("CustomerId");
-            if (customerId == null) return RedirectToAction("Login", "Account");
+            if (!IsLOggedIn()) return RedirectToAction("Login", "Account");
+            var customerId = GetCurrentCustomerId();
 
             var order = new Order
             {
@@ -58,44 +58,30 @@ namespace CoffeeApp.Controllers
             public int ProductId { get; set; }
             public int Quantity { get; set; }
         }
-
-        //[HttpPost]
-        //public IActionResult Create(Order order)
-        //{
-        //    var customerId = HttpContext.Session.GetInt32("CustomerId");
-
-        //    if (customerId == null)
-        //        return RedirectToAction("Login", "Account");
-
-        //    order.CustomerId = customerId.Value;
-        //    order.OrderCreated = DateTime.Now;
-
-        //    // OrderDetail nesnelerini de ekleyelim
-        //    foreach (var orderDetail in order.OrderDetails)
-        //    {
-        //        orderDetail.OrderId = order.Id;
-        //    }
-
-        //    _context.Orders.Add(order);
-        //    _context.SaveChanges();
-
-        //    return RedirectToAction("MyOrders");
-        //}
-
+  
         public IActionResult MyOrders()
         {
-            var customerId = HttpContext.Session.GetInt32("CustomerId");
-
-            if (customerId == null)
-                return RedirectToAction("Login", "Account");
+            if (!IsLOggedIn()) return RedirectToAction("Login", "Account");
+            var customerId = GetCurrentCustomerId();
 
             var orders = _context.Orders
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
                 .Where(o => o.CustomerId == customerId) // varsa filtrele
+                .OrderByDescending(o => o.OrderCreated) // en yeni en üstte
                 .ToList();
 
             return View(orders);
+        }
+
+        private bool IsLOggedIn()
+        {
+            var customerId = GetCurrentCustomerId();
+            return customerId != null;
+        }
+        private int? GetCurrentCustomerId()
+        {
+            return HttpContext.Session.GetInt32("CustomerId");
         }
     }
 }

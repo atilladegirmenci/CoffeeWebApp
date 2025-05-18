@@ -1,23 +1,55 @@
 ﻿@model IEnumerable<CoffeeApp.Models.Order>
+@using System.Globalization
 
-<h2>Hesabım - Siparişlerim</h2>
+<h2 class="my-4">Hesabım - Siparişlerim</h2>
 
-@foreach (var order in Model)
-{
-    <div>
-        <p><strong>Sipariş Tarihi:</strong> @order.OrderCreated</p>
-        <p><strong>Durum:</strong> @(order.OrderFullfilled.HasValue ? "Tamamlandı" : "Beklemede")</p>
+<div class="row row-cols-1 g-4">
+    @foreach (var order in Model)
+    {
+        var isFulfilled = order.OrderFullfilled.HasValue;
+        var totalAmount = order.OrderDetails.Sum(d => d.Quantity * d.Product.Price);
 
-        <h3>Sipariş Detayları:</h3>
-        <ul>
-            @foreach (var detail in order.OrderDetails)
-            {
-                <li>
-                    <strong>Ürün:</strong> @detail.Product.Name -
-                    <strong>Adet:</strong> @detail.Quantity -
-                    <strong>Fiyat:</strong> @detail.Product.Price
-                </li>
-            }
-        </ul>
-    </div>
-}
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="card-text">
+                        <strong>Durum:</strong>
+                        @if (isFulfilled)
+                        {
+                            <span class="text-success">
+                                <i class="bi bi-check-circle-fill"></i> Tamamlandı
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-warning">
+                                <i class="bi bi-hourglass-split"></i> Beklemede
+                            </span>
+                        }
+                    </p>
+                    <h5 class="card-title">Sipariş Tarihi: @order.OrderCreated.ToString("dd.MM.yyyy")</h5>
+                    @if (isFulfilled)
+                    {
+                        <h5 class="card-title">Tamamlanma Tarihi: @order.OrderFullfilled?.ToString("dd.MM.yyyy")</h5>
+                    }
+
+                    <h6 class="mt-3">Sipariş Detayları:</h6>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var detail in order.OrderDetails)
+                        {
+                            <li class="list-group-item">
+                                <strong>Ürün:</strong> @detail.Product.Name |
+                                <strong>Adet:</strong> @detail.Quantity |
+                                <strong>Fiyat:</strong> @detail.Product.Price.ToString("C", new CultureInfo("tr-TR"))
+                            </li>
+                        }
+                    </ul>
+
+                    <div class="mt-3 text-end">
+                        <strong>Toplam Tutar: </strong> @totalAmount.ToString("C", new CultureInfo("tr-TR"))
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

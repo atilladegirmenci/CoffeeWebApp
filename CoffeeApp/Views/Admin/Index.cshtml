@@ -1,0 +1,45 @@
+﻿@model IEnumerable<CoffeeApp.Models.Order>
+
+<h2>Admin Panel - Sipariş Listesi</h2>
+
+@foreach (var order in Model)
+{
+    var isFulfilled = order.OrderFullfilled.HasValue;
+
+    <div class="card mb-3 p-3">
+        <p><strong>Müşteri:</strong> @order.Customer?.FirstName (@order.Customer?.Email)</p>
+        <p>
+            <strong>Durum:</strong>
+            @if (isFulfilled)
+            {
+                <span class="text-success">
+                    <i class="bi bi-check-circle-fill"></i> Tamamlandı
+                </span>
+            }
+            else
+            {
+                <span class="text-warning">
+                    <i class="bi bi-hourglass-split"></i> Beklemede
+                </span>
+            }
+        </p>
+
+        <p><strong>Sipariş Tarihi:</strong> @order.OrderCreated</p>
+        @if(isFulfilled) {<p><strong>Tamamlanma Tarihi:</strong> @order.OrderFullfilled</p>}
+       
+        <ul>
+            @foreach (var detail in order.OrderDetails)
+            {
+                <li>@detail.Product.Name - Adet: @detail.Quantity</li>
+            }
+        </ul>
+
+        @if (!isFulfilled)
+        {
+            <form asp-action="FulfillOrder" asp-controller="Admin" method="post">
+                <input type="hidden" name="id" value="@order.Id" />
+                <button type="submit" class="btn btn-success btn-sm">Tamamla</button>
+            </form>
+        }
+    </div>
+}
