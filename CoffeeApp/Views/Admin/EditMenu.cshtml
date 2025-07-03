@@ -1,0 +1,36 @@
+﻿@{
+	var products = ViewBag.Product as List<Product>;
+}
+
+
+<form method="post" asp-action="EditMenu">
+    <table>
+        <thead>
+            <tr>
+                <th>Ürün</th>
+                <th>Fiyat</th>
+                <th>Görünür</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < products.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @products[i].Name
+                        <input type="hidden" name="[@i].Id" value="@products[i].Id" />
+                        <input type="hidden" name="[@i].Name" value="@products[i].Name" />
+                    </td>
+                    <td>
+                        <input type="number" name="[@i].Price" value="@products[i].Price" step="0.01" />
+                    </td>
+                    <td>
+                        <input type="checkbox" name="[@i].IsAvailable" value="true" @(products[i].IsAvailable ? "checked" : "") />
+                        <input type="hidden" name="[@i].IsAvailable" value="false" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit">Save</button>
+</form>

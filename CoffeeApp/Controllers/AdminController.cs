@@ -38,5 +38,25 @@ namespace CoffeeApp.Controllers
             }
             return RedirectToAction("Index");
         }
+        public IActionResult EditMenu()
+        {
+            ViewBag.product = _context.Products.ToList();
+            return View();
+        }
+        [HttpPost]
+        public IActionResult EditMenu(List<Product> prod)
+        {
+
+            foreach (var item in prod)
+            {
+                var product = _context.Products.Find(item.Id);
+                product.Price = item.Price;
+                product.IsAvailable = item.IsAvailable;
+            }
+
+            _context.SaveChanges();
+            return RedirectToAction("Create", "Order");
+
+        }
     }
 }

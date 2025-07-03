@@ -10,6 +10,7 @@ namespace CoffeeApp.Models
         [Column(TypeName = "decimal(5,2)")]
         public decimal Price { get; set; }
 
+        public bool IsAvailable { get; set; } = true;
         public string? ImageUrl { get; set; }
     }
 }
