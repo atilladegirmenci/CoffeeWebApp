@@ -22,4 +22,12 @@
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Admin\CreateCoffee.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Admin\CreateCoffee.cshtml" />
+  </ItemGroup>
+
 </Project>

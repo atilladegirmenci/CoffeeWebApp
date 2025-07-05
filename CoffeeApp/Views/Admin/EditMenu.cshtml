@@ -1,6 +1,7 @@
-﻿@{
-	var products = ViewBag.Product as List<Product>;
-}
+﻿
+	@* var products = ViewBag.Product as List<Product>; *@
+    @model List<Product>
+
 
 
 <form method="post" asp-action="EditMenu">
@@ -13,24 +14,27 @@
             </tr>
         </thead>
         <tbody>
-            @for (int i = 0; i < products.Count; i++)
+            @for (int i = 0; i < Model.Count; i++)
             {
                 <tr>
                     <td>
-                        @products[i].Name
-                        <input type="hidden" name="[@i].Id" value="@products[i].Id" />
-                        <input type="hidden" name="[@i].Name" value="@products[i].Name" />
+                        @Model[i].Name
+                        <input type="hidden" name="prod[@i].Id" value="@Model[i].Id" />
+                        <input type="hidden" name="prod[@i].Name" value="@Model[i].Name" />
                     </td>
                     <td>
-                        <input type="number" name="[@i].Price" value="@products[i].Price" step="0.01" />
+                        <input type="number" name="prod[@i].Price" value="@Model[i].Price" step="0.01" />
                     </td>
                     <td>
-                        <input type="checkbox" name="[@i].IsAvailable" value="true" @(products[i].IsAvailable ? "checked" : "") />
-                        <input type="hidden" name="[@i].IsAvailable" value="false" />
+                        <input type="checkbox" name="prod[@i].IsAvailable" value="true" @(Model[i].IsAvailable ? "checked" : "") />
+                        <input type="hidden" name="prod[@i].IsAvailable" value="false" />
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-    <button type="submit">Save</button>
+    <button type="submit" class="btn btn-primary"">Save</button>
 </form>
+<div>
+    <button onclick="window.location.href='@Url.Action("CreateCoffee", "Admin")'" class="btn btn-primary mt-1">Create New Coffee</button>
+</div>

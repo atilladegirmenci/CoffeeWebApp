@@ -1,0 +1,25 @@
+﻿@model CoffeeApp.Models.Product
+
+<form asp-action="CreateCoffee" method="post" enctype="multipart/form-data">
+    <div class="form-group mt-1">
+        <label asp-for="Name">Product Name</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="form-group mt-1">
+        <label asp-for="Price">Price</label>
+        <input asp-for="Price" class="form-control" />
+    </div>
+
+    <div class="form-group mt-1">
+        <label>Upload Image</label>
+        <input type="file" name="imageFile" class="form-control" />
+    </div>
+
+    <div class="form-group mt-1">
+        <label asp-for="IsAvailable">In Stock</label>
+        <input asp-for="IsAvailable" type="checkbox" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-1">save</button>
+</form>

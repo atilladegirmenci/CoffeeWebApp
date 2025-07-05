@@ -8,10 +8,12 @@ namespace CoffeeApp.Controllers
     public class AdminController : Controller
     {
         private readonly CoffeeContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public AdminController(CoffeeContext context)
+        public AdminController(CoffeeContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         public IActionResult Index()
@@ -29,8 +31,8 @@ namespace CoffeeApp.Controllers
         public IActionResult FulfillOrder(int id)
         {
             var order = _context.Orders.FirstOrDefault(o => o.Id == id);
-            
-            if(order != null)
+
+            if (order != null)
             {
                 order.OrderFullfilled = DateTime.Now;
                 _context.SaveChanges();
@@ -40,8 +42,8 @@ namespace CoffeeApp.Controllers
         }
         public IActionResult EditMenu()
         {
-            ViewBag.product = _context.Products.ToList();
-            return View();
+            var products = _context.Products.ToList();
+            return View(products);
         }
         [HttpPost]
         public IActionResult EditMenu(List<Product> prod)
@@ -50,12 +52,51 @@ namespace CoffeeApp.Controllers
             foreach (var item in prod)
             {
                 var product = _context.Products.Find(item.Id);
-                product.Price = item.Price;
-                product.IsAvailable = item.IsAvailable;
+                if (product != null)
+                {
+                    product.Price = item.Price;
+                    product.IsAvailable = item.IsAvailable;
+                }
             }
 
             _context.SaveChanges();
             return RedirectToAction("Create", "Order");
+        }
+        public IActionResult CreateCoffee()
+        {
+            return View("~/Views/Admin/CreateCoffee.cshtml");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCoffee(Product product, IFormFile imageFile)
+        {
+            if (ModelState.IsValid)
+            {
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(_env.WebRootPath, "img");
+
+                    if (!Directory.Exists(uploadsFolder))
+                        Directory.CreateDirectory(uploadsFolder);
+
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await imageFile.CopyToAsync(stream);
+                    }
+
+                    product.ImageUrl = "/img/" + fileName;
+                }
+
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index"); // veya liste sayfası
+            }
+
+            return View(product);
+
 
         }
     }
