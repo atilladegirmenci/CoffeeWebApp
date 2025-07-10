@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<CoffeeApp.Models.Order>
 
-<h2>Admin Panel - Sipariş Listesi</h2>
+<h2>Admin Panel - Order List</h2>
 
 @foreach (var order in Model)
 {
@@ -46,5 +46,7 @@
 }
 <div>
   
-    <button onclick="window.location.href='@Url.Action("EditMenu", "Admin")'" class="btn btn-primary position-fixed bottom-0 start-0 mb-3 ms-3">Edit Menu</button>
+    <button onclick="window.location.href='@Url.Action("EditMenu", "Admin")'" class="btn btn-primary position-fixed bottom-0 start-0 mb-1 ms-3">Edit Menu</button>
+    <button onclick="window.location.href='@Url.Action("Index", "Customer")'" class="btn btn-primary position-fixed bottom-0 start-0 mb-5 ms-3">Edit Customers</button>
+
 </div>

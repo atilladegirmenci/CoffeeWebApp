@@ -1,16 +1,15 @@
 ﻿
-	@* var products = ViewBag.Product as List<Product>; *@
-    @model List<Product>
+	
+ @model List<Product>
 
-
-
-<form method="post" asp-action="EditMenu">
-    <table>
+<form asp-action="EditMenu" method="post">
+    <table style="border-collapse: separate; border-spacing: 0 10px;">
         <thead>
             <tr>
-                <th>Ürün</th>
-                <th>Fiyat</th>
-                <th>Görünür</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Available</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -25,16 +24,41 @@
                     <td>
                         <input type="number" name="prod[@i].Price" value="@Model[i].Price" step="0.01" />
                     </td>
-                    <td>
+                    <td style="text-align: center;">
                         <input type="checkbox" name="prod[@i].IsAvailable" value="true" @(Model[i].IsAvailable ? "checked" : "") />
                         <input type="hidden" name="prod[@i].IsAvailable" value="false" />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteProduct(@Model[i].Id)">Delete</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-    <button type="submit" class="btn btn-primary"">Save</button>
+    <div class="d-flex gap-2 mt-3">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("CreateCoffee", "Admin")'">
+            Create New Product
+        </button>
+    </div>
 </form>
-<div>
-    <button onclick="window.location.href='@Url.Action("CreateCoffee", "Admin")'" class="btn btn-primary mt-1">Create New Coffee</button>
-</div>
+
+
+<script>
+    function deleteProduct(id) {
+        if (confirm("Silmek istediğinize emin misiniz?")) {
+            fetch('/Admin/DeleteProduct', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': document.querySelector('[name="__RequestVerificationToken"]').value
+                },
+                body: 'id=' + id
+            })
+                .then(() => {
+                    // Sayfayı yenile
+                    location.reload();
+                });
+        }
+    }
+</script>

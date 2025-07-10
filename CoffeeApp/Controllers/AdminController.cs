@@ -16,7 +16,7 @@ namespace CoffeeApp.Controllers
             _env = env;
         }
 
-        public IActionResult Index()
+        public IActionResult Index() //list page
         {
             var orders = _context.Orders
                 .Include(o => o.Customer)
@@ -92,11 +92,23 @@ namespace CoffeeApp.Controllers
 
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index"); // veya liste sayfası
+                return RedirectToAction("Index"); // list page
             }
 
             return View(product);
 
+
+        }
+        [HttpPost]
+        public IActionResult DeleteProduct(int id)
+        {
+            var product = _context.Products.Find(id);
+            if(product != null)
+            {
+                _context.Products.Remove(product);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Index");
 
         }
     }
